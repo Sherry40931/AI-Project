@@ -10,6 +10,7 @@
 #define main_h
 
 #include <iostream>
+#include <vector>
 using namespace std;
 
 struct Points{int x, y;};
@@ -19,13 +20,18 @@ class Board
 public:
     //Board();
     void addChess(int row, int col);
+    void addChessToFakeTable(int row, int col);
     void checkBoard();
     void printBoard();
-    list <Points> getValidMove();
+    void clearBoard();
+    void copyTable();
+    
+    vector<Points> getValidMove();
     
     int getTurn();
     int getState();
     int table[15][15] = {0};
+    int fakeTable[15][15] = {0};
     
 private:
     int turn = 1;
@@ -33,10 +39,11 @@ private:
     
 };
 
-list <Points> Board::getValidMove(){
-	list <Points> validMoves = list <Points>();
+vector<Points> Board::getValidMove(){
+	vector<Points> validMoves = vector<Points>();
 	int i, j;
 	Points toBeAdd;
+	int XMax=-999, XMin=999, YMax=-999, YMin=999;
 	
 	for(i=0; i<15; i++){
 		for(j=0; j<15; j++){
@@ -44,7 +51,6 @@ list <Points> Board::getValidMove(){
 				toBeAdd.x = i;
 				toBeAdd.y = j;
 				validMoves.push_back(toBeAdd);
-				//printf("in getValidMove: %d %d\n", i, j);
 			}
 		}
 	}
@@ -73,6 +79,20 @@ void Board::addChess(int row, int col){
     }
 }
 
+void Board::addChessToFakeTable(int row, int col){
+    if(row < 0 || col < 0 || row > 14 || col > 14){
+        state = -2;
+    }
+    else if(table[row][col] != 0){
+        state = -1;
+    }
+    else{
+        fakeTable[row][col] = (turn % 2) * 2  - 1;
+        //checkBoard();
+        if(state == 0) turn++;
+    }
+}
+
 void Board::printBoard(){
     for (int i = 0; i < 15; i++){
         for (int j = 0; j < 15; j++){
@@ -84,6 +104,7 @@ void Board::printBoard(){
         }
         cout << endl;
     }
+    cout << endl;
 }
 
 void Board::checkBoard(){
@@ -142,6 +163,22 @@ void Board::checkBoard(){
     }
     
     state = 0;
+}
+
+void Board::clearBoard(){
+	for(int i=0; i<15; i++){
+		for(int j=0; j<15; j++){
+			table[i][j] = 0;
+		}
+	}
+}
+
+void Board::copyTable(){
+	for(int i=0; i<15; i++){
+		for(int j=0; j<15; j++){
+			fakeTable[i][j] = table[i][j];
+		}
+	}
 }
 
 #endif /* main_h */

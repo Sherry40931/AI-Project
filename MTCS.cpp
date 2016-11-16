@@ -1,21 +1,13 @@
 #include "MTCS.h"
 
 int main(int argc, const char * argv[]) {
-    
     Board gameBoard = Board();
     MTCS mtcs = MTCS(gameBoard);
     
-    /*
-    gameBoard.addChess(1, 5);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(2, 4);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(3, 3);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(4, 2);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(5, 1);
-    */
+    //printf("Who am I? 1 for black, 0 for white\n");
+    //scanf("%d", &mtcs.WhoAmI);
+    mtcs.WhoAmI = 1;
+    srand(time(NULL));
     
     mtcs.Execute();
     
@@ -31,21 +23,25 @@ void MTCS::Execute(){
 	Points rootPos;
 	rootPos.x = 7;
 	rootPos.y = 7;
-	Node root = Node(NULL, 0, rootPos);	//put at middle
-	Node one = Node(&root, 1, rootPos);
-	root.children.push_back(one);
+	Node root = Node(nullptr, 0, rootPos);	//put at middle
 	
 	//寫入棋盤
 	MyBoard.addChess(rootPos.x, rootPos.y);
-	//MyBoard.printBoard();
 	
-	for (int iteration = 0; iteration < 10; iteration++)
+	while(!MyBoard.getState())
     {
-    	printf("Execute\n");
-        Node current = Selection(root);
-        Backpropagation(current, 1);
+        Node current = Selection(&root);
+    	int value = Simulation(&current);
+        Backpropagation(&current, value);
+        printf("==========\n");
         PrintNode(root);
     }
+    
+    //結束訊息
+    if(MyBoard.getTurn() % 2 == 1)
+    	printf("Black win\n");
+    else
+    	printf("White win\n");
 }
 
 //----------------------------------------------------------------------
@@ -53,60 +49,80 @@ void MTCS::Execute(){
 // 選擇節點，如果走到leaf，就expand，若不是leaf，就從children 
 // list裡找最好的(FindBestChild)
 //----------------------------------------------------------------------
-Node MTCS::Selection(Node current){
-	while(!MyBoard.getState()){
-			
-		list <Points> validMoves = MyBoard.getValidMove();
-		printf("Selection %lu %lu\n", validMoves.size(), current.children.size());
+Node MTCS::Selection(Node *current){
+	while(!MyBoard.getState())
+	{		
+		vector<Points> validMoves = MyBoard.getValidMove();
 
-		if(validMoves.size() > current.children.size())	//is leaf
+		//橫向擴張
+		if(current->children.size() < 4)
 			return Expansion(current);
 		else
-			current = FindBestChild(current);
+			*current = FindBestChild(*current);
 	}
 	
-	return current;
+	return *current;
 }
 
 //----------------------------------------------------------------------
 // MTCS::Expansion
-// 長一個node，從目前可以走的位置挑一個走，寫入棋盤
+// 從leaf長一個node，從目前可以走的位置random挑一個走，寫入棋盤
+// *****應該不能用random，要給weighting
 //----------------------------------------------------------------------
-Node MTCS::Expansion(Node current){
-	printf("Expansion\n");
+Node MTCS::Expansion(Node *current){
 	
-	list <Points> validMoves = MyBoard.getValidMove();
-	for(list<Points>::iterator i = validMoves.begin(); i != validMoves.end(); i++){
-		Node newNode = Node(&current, current.depth, *i);	
-		current.children.push_back(newNode);
-		//printf("DO I ADD? %d %d\n", current.point.x, current.point.y);
+	vector<Points> validMoves = MyBoard.getValidMove();
+	int ranIndex = rand() % validMoves.size();
+
+	Node newNode = Node(current, current->depth+1, validMoves[ranIndex]);	
+	current->children.push_back(newNode);
 		
-		//寫入棋盤
-		MyBoard.addChess(i->x, i->y);
-		//MyBoard.printBoard();
-		return newNode;
-	}
-	return current;
+	//寫入棋盤
+	MyBoard.addChess(validMoves[ranIndex].x, validMoves[ranIndex].y);
+	//MyBoard.printBoard();
+	return newNode;
 }
 
 //----------------------------------------------------------------------
 // MTCS::Simulation
-// ？？？？？？？
+// 模擬所有可能
 //----------------------------------------------------------------------
-Node MTCS::Simulation(Node current){
-	return current;
+int MTCS::Simulation(Node *current){
+	int cnt = 0;
+	vector<Points> validMoves;
+	
+	//把真正的棋盤拷貝到模擬的棋盤
+	MyBoard.copyTable();
+	//模擬
+	while(validMoves.size() > 0){
+		validMoves = MyBoard.getValidMove();
+		int ranIndex = rand() % validMoves.size();
+		MyBoard.addChessToFakeTable(validMoves[ranIndex].x, validMoves[ranIndex].y);
+	}
+	
+	//平手
+	if(MyBoard.getState() == 0){	
+		return 0;
+	}
+	//我贏
+	else if(MyBoard.getTurn() % 2 == WhoAmI){ 
+		return 1;
+	}
+	//我輸
+	else{ 
+		current->parent->value = -1000;
+		return -1;
+	}
 }
 
 //----------------------------------------------------------------------
 // MTCS::Backpropagation
 // 走到底之後，回傳這條路徑的值
 //----------------------------------------------------------------------
-void MTCS::Backpropagation(Node current, int value){
-	if(&current != (Node*)NULL){
-		//printf("TEST\n");
-		current.visits++;
-		current.value += value;
-		Backpropagation(*current.parent, value);
+void MTCS::Backpropagation(Node *current, int value){
+	if(current != (Node*)NULL){
+		current->visits++;
+		current->value += value;
 	}
 }
 
@@ -120,14 +136,14 @@ Node MTCS::FindBestChild(Node current){
 	Points pos;
 	pos.x = -1;
 	pos.y = -1;
-	Node bestChild = Node(&current, current.depth, pos);
+	Node bestChild = Node(&current, current.depth+1, pos);
 	int bestValue = -99999;
 	int i;
 	
-	for (list<Node>::iterator i = current.children.begin(); i != current.children.end(); i++) {
-		if(i->value > bestValue){
-			bestChild = *i;
-			bestValue = i->value;
+	for (i=0; i<current.children.size(); i++) {
+		if(current.children[i].value > bestValue){
+			bestChild = current.children[i];
+			bestValue = current.children[i].value;
 		}
 	}
 	
@@ -141,7 +157,7 @@ Node MTCS::FindBestChild(Node current){
 //----------------------------------------------------------------------
 void MTCS::PrintNode(Node current){
 	printf("PrintNode: %d %d %d %lu\n", current.point.x, current.point.y, current.depth, current.children.size());
-	for (list<Node>::iterator i = current.children.begin(); i != current.children.end(); i++){
-		PrintNode(*i);
+	for (int i=0; i<current.children.size(); i++){
+		PrintNode(current.children[i]);
 	}
 }

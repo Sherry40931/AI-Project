@@ -12,10 +12,10 @@ class MTCS {
 		MTCS(Board board){
 			this->MyBoard = board;
 		};
-    	Node Selection(Node current);
-	    Node Expansion(Node current);
-    	Node Simulation(Node current);
-    	void Backpropagation(Node current, int value);
+    	Node Selection(Node *current);
+	    Node Expansion(Node *current);
+    	int Simulation(Node *current);
+    	void Backpropagation(Node *current, int value);
     	Node FindBestChild(Node current);
     	
     	void PrintNode(Node current);
@@ -28,7 +28,7 @@ class MTCS {
 class Node{
 	public:
 		Node *parent;
-		list <Node> children;
+		vector<Node> children;
 		Points point;
 		int value = 0;
 		int visits = 0;
