@@ -1,8 +1,10 @@
 #include "MTCS.h"
 
+Board gameBoard = Board();
+boardJudgement bj = boardJudgement(&gameBoard);
+MTCS mtcs = MTCS(&gameBoard);
+
 int main(int argc, const char * argv[]) {
-    Board gameBoard = Board();
-    MTCS mtcs = MTCS(gameBoard);
     
     //printf("Who am I? 1 for black, 0 for white\n");
     //scanf("%d", &mtcs.WhoAmI);
@@ -26,10 +28,11 @@ void MTCS::Execute(){
 	Node root = Node(nullptr, 0, rootPos);	//put at middle
 	
 	//寫入棋盤
-	MyBoard.addChess(rootPos.x, rootPos.y);
+	MyBoard->addChess(rootPos.x, rootPos.y);
 	
-	while(!MyBoard.getState())
+	while(MyBoard->getState() != 1)
     {
+    	printf("STATE: %d\n", MyBoard->getState());
         Node current = Selection(&root);
     	int value = Simulation(&current);
         Backpropagation(&current, value);
@@ -38,7 +41,7 @@ void MTCS::Execute(){
     }
     
     //結束訊息
-    if(MyBoard.getTurn() % 2 == 1)
+    if(MyBoard->getTurn() % 2 == 1)
     	printf("Black win\n");
     else
     	printf("White win\n");
@@ -50,12 +53,12 @@ void MTCS::Execute(){
 // list裡找最好的(FindBestChild)
 //----------------------------------------------------------------------
 Node MTCS::Selection(Node *current){
-	while(!MyBoard.getState())
+	while(MyBoard->getState() == 0)
 	{		
-		vector<Points> validMoves = MyBoard.getValidMove();
+		vector<Points> validMoves = MyBoard->getValidMove();
 
 		//橫向擴張
-		if(current->children.size() < 4)
+		if(current->children.size() == 0)
 			return Expansion(current);
 		else
 			*current = FindBestChild(*current);
@@ -71,15 +74,27 @@ Node MTCS::Selection(Node *current){
 //----------------------------------------------------------------------
 Node MTCS::Expansion(Node *current){
 	
-	vector<Points> validMoves = MyBoard.getValidMove();
+	bj.Judge();
+	vector<Points> validMoves;
+	Points bestPos;
+	printf("MAX: %d\n", bj.max);
+	for(int i=0; i<15; i++){
+		for(int j=0; j<15; j++){
+			if(bj.weight[i][j] == bj.max){
+				bestPos.x = i;
+				bestPos.y = j;
+				validMoves.push_back(bestPos);
+			}
+		}
+	}
 	int ranIndex = rand() % validMoves.size();
-
+	
 	Node newNode = Node(current, current->depth+1, validMoves[ranIndex]);	
 	current->children.push_back(newNode);
 		
 	//寫入棋盤
-	MyBoard.addChess(validMoves[ranIndex].x, validMoves[ranIndex].y);
-	//MyBoard.printBoard();
+	MyBoard->addChess(validMoves[ranIndex].x, validMoves[ranIndex].y);
+	MyBoard->printBoard();
 	return newNode;
 }
 
@@ -92,20 +107,20 @@ int MTCS::Simulation(Node *current){
 	vector<Points> validMoves;
 	
 	//把真正的棋盤拷貝到模擬的棋盤
-	MyBoard.copyTable();
+	MyBoard->copyTable();
 	//模擬
 	while(validMoves.size() > 0){
-		validMoves = MyBoard.getValidMove();
+		validMoves = MyBoard->getValidMove();
 		int ranIndex = rand() % validMoves.size();
-		MyBoard.addChessToFakeTable(validMoves[ranIndex].x, validMoves[ranIndex].y);
+		MyBoard->addChessToFakeTable(validMoves[ranIndex].x, validMoves[ranIndex].y);
 	}
 	
 	//平手
-	if(MyBoard.getState() == 0){	
+	if(MyBoard->getState() == 0){	
 		return 0;
 	}
 	//我贏
-	else if(MyBoard.getTurn() % 2 == WhoAmI){ 
+	else if(MyBoard->getTurn() % 2 == WhoAmI){ 
 		return 1;
 	}
 	//我輸

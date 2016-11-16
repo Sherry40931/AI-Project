@@ -3,13 +3,14 @@
 
 #include <list> 
 #include <vector>
-#include "main.h"
+#include "board.h"
+#include "boardJudgement.hpp"
  
 class Node;
 class MTCS {
 	public:
-		Board MyBoard;
-		MTCS(Board board){
+		Board *MyBoard;
+		MTCS(Board *board){
 			this->MyBoard = board;
 		};
     	Node Selection(Node *current);
