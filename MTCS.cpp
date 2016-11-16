@@ -5,13 +5,60 @@ boardJudgement bj = boardJudgement(&gameBoard);
 MTCS mtcs = MTCS(&gameBoard);
 
 int main(int argc, const char * argv[]) {
+
+	char r;
+    int row, col;
+    int player;
     
-    //printf("Who am I? 1 for black, 0 for white\n");
-    //scanf("%d", &mtcs.WhoAmI);
-    mtcs.WhoAmI = 1;
     srand(time(NULL));
     
-    mtcs.Execute();
+    cout << "Black or White Chess? (Black: 1, White: -1)";
+    cin  >> player;
+    bj.setMe(-player);
+    if(player == 1)
+    	mtcs.WhoAmI = 1;
+    else
+    	mtcs.WhoAmI = 0;
+    
+    while(true){
+        if(((gameBoard.getTurn() % 2) * 2 - 1) == player){
+            if(player == 1) cout << "Black: ";
+            else cout << "White: ";
+            
+            cin >> r;
+            row = r - 'A';
+            if(row == -1) break;
+            cin >> col;
+            if(col == -1) break;
+            
+            gameBoard.addChess(row, col);
+        }
+        else{
+            if(player == 1) cout << "White: " << endl;
+            else cout << "Black: " << endl;
+            
+            if(gameBoard.getTurn() == 1) gameBoard.addChess(6, 7);
+            else{
+                mtcs.Execute();
+                cout << endl << endl;
+            }
+            
+        }
+        
+        if(gameBoard.getState() == 0) gameBoard.printBoard();
+        else if(gameBoard.getState() == 1) break;
+        else if(gameBoard.getState() == -1) cout << "Repeated Chess!" << endl;
+        else cout << "Error Input!" << endl;
+    //end of while
+    }
+    
+    if(gameBoard.getState() == 1) {
+        if(gameBoard.getTurn()%2) cout << "Game Over! Winner: Black" << endl;
+        else cout << "Game Over! Winner: White" << endl;
+    }
+    else cout << "Game Over! Winner: N/A" << endl;
+    gameBoard.printBoard();
+            
     
     return 0;
 }
@@ -22,29 +69,17 @@ int main(int argc, const char * argv[]) {
 // MTCS 執行流程
 //----------------------------------------------------------------------
 void MTCS::Execute(){
+	
 	Points rootPos;
 	rootPos.x = 7;
 	rootPos.y = 7;
 	Node root = Node(nullptr, 0, rootPos);	//put at middle
-	
-	//寫入棋盤
-	MyBoard->addChess(rootPos.x, rootPos.y);
-	
-	while(MyBoard->getState() != 1)
-    {
-    	printf("STATE: %d\n", MyBoard->getState());
-        Node current = Selection(&root);
-    	int value = Simulation(&current);
-        Backpropagation(&current, value);
-        printf("==========\n");
-        PrintNode(root);
-    }
-    
-    //結束訊息
-    if(MyBoard->getTurn() % 2 == 1)
-    	printf("Black win\n");
-    else
-    	printf("White win\n");
+
+    Node current = Selection(&root);
+    int value = Simulation(&current);
+    Backpropagation(&current, value);
+    printf("==========\n");
+    PrintNode(root);
 }
 
 //----------------------------------------------------------------------
@@ -58,7 +93,7 @@ Node MTCS::Selection(Node *current){
 		vector<Points> validMoves = MyBoard->getValidMove();
 
 		//橫向擴張
-		if(current->children.size() == 0)
+		if(current->children.size() < validMoves.size())
 			return Expansion(current);
 		else
 			*current = FindBestChild(*current);
@@ -80,7 +115,7 @@ Node MTCS::Expansion(Node *current){
 	printf("MAX: %d\n", bj.max);
 	for(int i=0; i<15; i++){
 		for(int j=0; j<15; j++){
-			if(bj.weight[i][j] == bj.max){
+			if(bj.weight[i][j] == bj.max && MyBoard->table[i][j] == 0){
 				bestPos.x = i;
 				bestPos.y = j;
 				validMoves.push_back(bestPos);
@@ -171,7 +206,7 @@ Node MTCS::FindBestChild(Node current){
 // 印出目前的tree
 //----------------------------------------------------------------------
 void MTCS::PrintNode(Node current){
-	printf("PrintNode: %d %d %d %lu\n", current.point.x, current.point.y, current.depth, current.children.size());
+	printf("PrintNode: %c %d %d %lu\n", current.point.x+'A', current.point.y, current.depth, current.children.size());
 	for (int i=0; i<current.children.size(); i++){
 		PrintNode(current.children[i]);
 	}

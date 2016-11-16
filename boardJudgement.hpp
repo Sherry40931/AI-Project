@@ -84,14 +84,14 @@ void boardJudgement::Judge(){
                     maxj = j;
                     max = weight[i][j];
                 }
-                printf("%d ", weight[i][j]);
+                //printf("%d ", weight[i][j]);
                 //cout << check[0][1] << " ";
             }
             else{
-                printf("- ");
+                //printf("- ");
             }
         }
-        puts("");
+        //puts("");
     }
 }
 
