@@ -7,9 +7,10 @@
 //
 
 #include "main.h"
-
+#include "MTCS.h"
 
 Board gameBoard = Board();
+MTCS mtcs = MTCS(gameBoard);
 
 int main(int argc, const char * argv[]) {
     
@@ -23,6 +24,8 @@ int main(int argc, const char * argv[]) {
     gameBoard.addChess(4, 2);
     gameBoard.addChess(2, 1);
     gameBoard.addChess(5, 1);
+    
+    mtcs.Execute();
     
     gameBoard.printBoard();
     

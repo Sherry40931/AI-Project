@@ -12,6 +12,8 @@
 #include <iostream>
 using namespace std;
 
+struct Points{int x, y;};
+
 class Board
 {
 public:
@@ -19,12 +21,31 @@ public:
     void addChess(int row, int col);
     bool checkBoard();
     void printBoard();
+    list <Points> getValidMove();
     
 private:
     int board[15][15] = {0};
     int turn = 1;
     
 };
+
+list <Points> Board::getValidMove(){
+	list <Points> validMoves = list <Points>();
+	int i, j;
+	Points toBeAdd;
+	
+	for(i=0; i<15; i++){
+		for(j=0; j<15; j++){
+			if(board[i][j] == 0){
+				toBeAdd.x = i;
+				toBeAdd.y = j;
+				validMoves.push_back(toBeAdd);
+				//printf("in getValidMove: %d %d\n", i, j);
+			}
+		}
+	}
+	return validMoves;
+}
 
 void Board::addChess(int row, int col){
     board[row][col] = (turn % 2) * 2  - 1;
