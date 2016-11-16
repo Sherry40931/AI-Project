@@ -40,14 +40,16 @@ int Board::getTurn(){
 
 void Board::addChess(int row, int col){
     if(row < 0 || col < 0 || row > 14 || col > 14){
-        state = -1;
-        return;
+        state = -2;
     }
-    
-    board[row][col] = (turn % 2) * 2  - 1;
-    checkBoard();
-    if(state == 0) turn++;
-    
+    else if(board[row][col] != 0){
+        state = -1;
+    }
+    else{
+        board[row][col] = (turn % 2) * 2  - 1;
+        checkBoard();
+        if(state == 0) turn++;
+    }
 }
 
 void Board::printBoard(){

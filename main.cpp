@@ -13,32 +13,33 @@ Board gameBoard = Board();
 
 int main(int argc, const char * argv[]) {
     
+    char r;
     int row, col;
     
     while(true){
         if(gameBoard.getTurn()%2) cout << "Black: ";
         else cout << "White: ";
-        cin >> row;
+        cin >> r;
+        row = r - 'A';
         if(row == -1) break;
         cin >> col;
         if(col == -1) break;
         
         gameBoard.addChess(row, col);
         
-        
-        if(gameBoard.getState() >= 0){
-            if(gameBoard.getState() == 1) {
-                if(gameBoard.getTurn()%2) cout << "Game Over! Winner: Black" << endl;
-                else cout << "Game Over! Winner: Winner" << endl;
-            }
-            gameBoard.printBoard();
-        }
-        else cout << "Error Input!" << endl;;
+        if(gameBoard.getState() == 0) gameBoard.printBoard();
+        else if(gameBoard.getState() == 1) break;
+        else if(gameBoard.getState() == -1) cout << "Repeated Chess!" << endl;
+        else cout << "Error Input!" << endl;
         
         
     }
     
-    cout << "Game Over! Winner: N/A" << endl;
+    if(gameBoard.getState() == 1) {
+        if(gameBoard.getTurn()%2) cout << "Game Over! Winner: Black" << endl;
+        else cout << "Game Over! Winner: White" << endl;
+    }
+    else cout << "Game Over! Winner: N/A" << endl;
     gameBoard.printBoard();
     
     
