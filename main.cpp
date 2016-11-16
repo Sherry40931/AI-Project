@@ -7,27 +7,49 @@
 //
 
 #include "main.h"
-#include "MTCS.h"
+#include "boardJudgement.hpp"
+
 
 Board gameBoard = Board();
-MTCS mtcs = MTCS(gameBoard);
+boardJudgement bj = boardJudgement(&gameBoard);
 
 int main(int argc, const char * argv[]) {
     
+    char r;
+    int row, col;
     
-    gameBoard.addChess(1, 5);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(2, 4);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(3, 3);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(4, 2);
-    gameBoard.addChess(2, 1);
-    gameBoard.addChess(5, 1);
+    while(true){
+        if(gameBoard.getTurn()%2) cout << "Black: ";
+        else cout << "White: ";
+        cin >> r;
+        row = r - 'A';
+        if(row == -1) break;
+        cin >> col;
+        if(col == -1) break;
+        
+        gameBoard.addChess(row, col);
+        
+        if(gameBoard.getState() == 0) gameBoard.printBoard();
+        else if(gameBoard.getState() == 1) break;
+        else if(gameBoard.getState() == -1) cout << "Repeated Chess!" << endl;
+        else cout << "Error Input!" << endl;
+        
+        bj.Judge();
+        
+    }
     
-    mtcs.Execute();
     
+    if(gameBoard.getState() == 1) {
+        if(gameBoard.getTurn()%2) cout << "Game Over! Winner: Black" << endl;
+        else cout << "Game Over! Winner: White" << endl;
+    }
+    else cout << "Game Over! Winner: N/A" << endl;
     gameBoard.printBoard();
+    
+    
     
     return 0;
 }
+
+
+
