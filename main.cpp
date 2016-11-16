@@ -7,9 +7,12 @@
 //
 
 #include "main.h"
+#include "boardJudgement.hpp"
 
 
 Board gameBoard = Board();
+boardJudgement bj = boardJudgement(&gameBoard);
+
 
 int main(int argc, const char * argv[]) {
     
@@ -32,6 +35,7 @@ int main(int argc, const char * argv[]) {
         else if(gameBoard.getState() == -1) cout << "Repeated Chess!" << endl;
         else cout << "Error Input!" << endl;
         
+        bj.Judge();
         
     }
     
