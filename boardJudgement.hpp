@@ -9,45 +9,65 @@
 #ifndef boardJudgement_hpp
 #define boardJudgement_hpp
 
-#include <stdio.h>
-#include "main.h"
+#include "board.h"
+
+using namespace std;
 
 class boardJudgement
 {
 public:
     boardJudgement(Board* b);
-    int *check1, *check2, *check3, check4;
-    int *check[4];
+    //int *check1, *check2, *check3, check4;
+    int *check[8];
     void Judge();
     int* CheckX(int, int, int);
     int* CheckY(int, int, int);
     int* CheckXY(int, int, int);
     int* CheckYX(int, int, int);
+    int getWeight();
+    void setMe(int player);
+    int weight[15][15];
+    int max = 0, maxi, maxj;
     
 private:
     Board* board;
     int size = 15;
-    int me=1;
-    
+    int me = 1;
 };
 
 boardJudgement::boardJudgement(Board* b){
     board = b;
 }
 
+void boardJudgement::setMe(int player){
+    me = player;
+}
+
 void boardJudgement::Judge(){
+    max = 0;
     for(int i=0; i<size;i++){
         for(int j=0; j<size; j++){
             if(board->table[i][j] == 0){
-                check[0] = CheckX(i, j, me);
-                check[1] = CheckY(i, j, me);
-                check[2] = CheckXY(i, j, me);
-                check[3] = CheckYX(i, j, me);
-                printf("%d ", *check[0]);
+                check[0] = CheckX(i, j, me);    //橫的
+                check[1] = CheckY(i, j, me);    //直的
+                check[2] = CheckXY(i, j, me);   //左上右下
+                check[3] = CheckYX(i, j, me);   //右上左下
+                check[4] = CheckX(i, j, -me);
+                check[5] = CheckY(i, j, -me);
+                check[6] = CheckXY(i, j, -me);
+                check[7] = CheckYX(i, j, -me);
+                
+                weight[i][j] = getWeight();
+                if(weight[i][j] > max){
+                    maxi = i;
+                    maxj = j;
+                    max = weight[i][j];
+                }
+                printf("%d ", weight[i][j]);
             }
             else{
                 printf("- ");
-            }			
+            }
         }
         puts("");
     }
@@ -58,7 +78,7 @@ int* boardJudgement::CheckX(int m, int n, int me){
     int flag = 0;
     int num = 1;
     int i, j;
-    i = n+1;
+    i = n+1;        //往右找
     while(i<size){
         if(board->table[m][i] == me){
             num++;
@@ -96,7 +116,7 @@ int* boardJudgement::CheckY(int m, int n, int me){
     static int result[2] = {};
     int flag = 0;
     int num = 1;
-    int i, j;
+    int i;
     
     i = m+1;
     while(i<size){
@@ -213,6 +233,60 @@ int* boardJudgement::CheckYX(int m, int n, int me){
     
     return result;
 }
+
+int boardJudgement::getWeight(){
+    int tempWeight = 0;
+    //檢查自己的連子情況
+    for(int i = 0; i < 4; i++){
+        switch ( *check[i] ) {
+            case 5:
+                tempWeight += 1000;
+                break;
+                
+            case 4:
+                tempWeight += 160;
+                break;
+                
+            case 3:
+                tempWeight += 10;
+                break;
+                
+            case 2:
+                tempWeight += 1;
+                break;
+                
+            default:
+                break;
+        }
+    }
+    //檢查敵人
+    for(int i = 4; i < 7; i++){
+        switch ( *check[i] ) {
+            case 5:
+                tempWeight += 320;
+                break;
+                
+            case 4:
+                tempWeight += 80;
+                break;
+                
+            case 3:
+                tempWeight += 10;
+                break;
+                
+            case 2:
+                tempWeight += 1;
+                break;
+                
+            default:
+                break;
+        }
+    }
+    
+    return tempWeight;
+}
+
+
 
 
 #endif /* boardJudgement_hpp */
