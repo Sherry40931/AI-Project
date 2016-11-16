@@ -38,9 +38,18 @@ int main(int argc, const char * argv[]) {
             gameBoard.addChess(row, col);
         }
         else{
-            bj.Judge();
-            cout << endl << endl;
-            gameBoard.addChess(bj.maxi, bj.maxj);
+            if(player == 1) cout << "White: " << endl;
+            else cout << "Black: " << endl;
+            
+            if(gameBoard.getTurn() == 1) gameBoard.addChess(6, 7);
+            else{
+                bj.Judge();
+                
+                gameBoard.addChess(bj.maxi, bj.maxj);
+                
+                cout << endl << endl;
+            }
+            
         }
         
         if(gameBoard.getState() == 0) gameBoard.printBoard();

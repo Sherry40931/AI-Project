@@ -236,23 +236,37 @@ int* boardJudgement::CheckYX(int m, int n, int me){
 
 int boardJudgement::getWeight(){
     int tempWeight = 0;
+    int c3 = 0, c2 = 0;
     //檢查自己的連子情況
     for(int i = 0; i < 4; i++){
         switch ( *check[i] ) {
             case 5:
-                tempWeight += 1000;
+                tempWeight += 50000;
                 break;
                 
             case 4:
-                tempWeight += 160;
+                
+                if(check[i][1] == 0)  //活4 多+30
+                    tempWeight += 1500;
+                else tempWeight += 1250;
                 break;
                 
             case 3:
-                tempWeight += 10;
+                if(check[i][1] == 0){ //活3
+                    c3++;
+                    tempWeight += 5;
+                    if(c3 > 1){
+                        tempWeight += 50;
+                    }
+                }
+                else{
+                    tempWeight += 1;
+                }
                 break;
                 
             case 2:
-                tempWeight += 1;
+                if(check[i][1] == 0)
+                    tempWeight += 1;
                 break;
                 
             default:
@@ -260,22 +274,34 @@ int boardJudgement::getWeight(){
         }
     }
     //檢查敵人
+    c3 = 0;
+    c2 = 0;
     for(int i = 4; i < 7; i++){
         switch ( *check[i] ) {
             case 5:
-                tempWeight += 320;
+                tempWeight += 6250;
                 break;
                 
             case 4:
-                tempWeight += 80;
+                if(check[i][1]==0) //敵人下一步活4
+                    tempWeight += 250;
+                //else if(flag==1) //死4
+                //tempWeight += 40;
                 break;
                 
             case 3:
-                tempWeight += 10;
+                if(check[i][1] == 0){ //活3
+                    c3++;
+                    tempWeight += 3;
+                    if(c3 > 1){
+                        tempWeight += 10;
+                    }
+                }
                 break;
                 
             case 2:
-                tempWeight += 1;
+                if(check[i][1] == 0)
+                    tempWeight += 1;
                 break;
                 
             default:
