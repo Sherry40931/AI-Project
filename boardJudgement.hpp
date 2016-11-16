@@ -57,6 +57,27 @@ void boardJudgement::Judge(){
                 check[6] = CheckXY(i, j, -me);
                 check[7] = CheckYX(i, j, -me);
                 
+                if(i == 6 && j == 6){
+                    check[0] = CheckX(i, j, me);    //橫的
+                    cout << endl << check[0][0] << endl;
+                    check[1] = CheckY(i, j, me);    //直的
+                    check[2] = CheckXY(i, j, me);   //左上右下
+                    check[3] = CheckYX(i, j, me);   //右上左下
+                    cout << endl << check[0][0] << endl;
+                    check[4] = CheckX(i, j, -me);
+                    
+                    check[5] = CheckY(i, j, -me);
+                    check[6] = CheckXY(i, j, -me);
+                    check[7] = CheckYX(i, j, -me);
+
+                    
+                    cout << me << endl;
+                    for(int w = 0; w < 8; w++){
+                        cout << check[w][0] << " ";
+                    }
+                    cout << endl;
+                }
+                
                 weight[i][j] = getWeight();
                 if(weight[i][j] > max){
                     maxi = i;
@@ -64,6 +85,7 @@ void boardJudgement::Judge(){
                     max = weight[i][j];
                 }
                 printf("%d ", weight[i][j]);
+                //cout << check[0][1] << " ";
             }
             else{
                 printf("- ");
@@ -235,17 +257,17 @@ int* boardJudgement::CheckYX(int m, int n, int me){
 }
 
 int boardJudgement::getWeight(){
+    //cout << "GGGGGG" << endl;
     int tempWeight = 0;
     int c3 = 0, c2 = 0;
     //檢查自己的連子情況
     for(int i = 0; i < 4; i++){
-        switch ( *check[i] ) {
+        switch ( check[i][0] ) {
             case 5:
                 tempWeight += 50000;
                 break;
                 
             case 4:
-                
                 if(check[i][1] == 0)  //活4 多+30
                     tempWeight += 1500;
                 else tempWeight += 1250;
@@ -265,7 +287,7 @@ int boardJudgement::getWeight(){
                 break;
                 
             case 2:
-                if(check[i][1] == 0)
+                //if(check[i][1] == 0)
                     tempWeight += 1;
                 break;
                 
@@ -276,8 +298,8 @@ int boardJudgement::getWeight(){
     //檢查敵人
     c3 = 0;
     c2 = 0;
-    for(int i = 4; i < 7; i++){
-        switch ( *check[i] ) {
+    for(int i = 4; i < 8; i++){
+        switch ( check[i][0] ) {
             case 5:
                 tempWeight += 6250;
                 break;
@@ -300,7 +322,7 @@ int boardJudgement::getWeight(){
                 break;
                 
             case 2:
-                if(check[i][1] == 0)
+                //if(check[i][1] == 0)
                     tempWeight += 1;
                 break;
                 

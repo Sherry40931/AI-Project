@@ -43,8 +43,27 @@ int main(int argc, const char * argv[]) {
             
             if(gameBoard.getTurn() == 1) gameBoard.addChess(6, 7);
             else{
-                bj.Judge();
                 
+                /*cout << bj.CheckX(6, 6, -player)[0] << " " << bj.CheckY(6, 6, -player)[0] << " "
+                << bj.CheckXY(6, 6, -player)[0] <<  " " << bj.CheckYX(6, 6, -player)[0] << endl;
+                
+                cout << bj.CheckX(6, 6, player)[0] << " " << bj.CheckY(6, 6, player)[0] << " "
+                << bj.CheckXY(6, 6, player)[0] <<  " " << bj.CheckYX(6, 6, player)[0] << endl;
+                
+                bj.check[0] = bj.CheckX(6, 6, -player);
+                bj.check[1] = bj.CheckY(6, 6, -player);
+                bj.check[2] = bj.CheckXY(6, 6, -player);
+                bj.check[3] = bj.CheckYX(6, 6, -player);
+                bj.check[4] = bj.CheckX(6, 6, -player);
+                bj.check[5] = bj.CheckY(6, 6, player);
+                bj.check[6] = bj.CheckXY(6, 6, player);
+                bj.check[7] = bj.CheckYX(6, 6, player);
+                int w = bj.getWeight();
+                cout << w << endl;*/
+                //return 0;
+                
+
+                bj.Judge();
                 gameBoard.addChess(bj.maxi, bj.maxj);
                 
                 cout << endl << endl;
@@ -70,5 +89,33 @@ int main(int argc, const char * argv[]) {
     return 0;
 }
 
+/*int max = 0;
+for(int i=0; i<15;i++){
+    for(int j=0; j<15; j++){
+        if(gameBoard.table[i][j] == 0){
+            bj.check[0] = bj.CheckX(i, j, -player);
+            bj.check[1] = bj.CheckY(i, j, -player);
+            bj.check[2] = bj.CheckXY(i, j, -player);
+            bj.check[3] = bj.CheckYX(i, j, -player);
+            bj.check[4] = bj.CheckX(i, j, player);
+            bj.check[5] = bj.CheckY(i, j, player);
+            bj.check[6] = bj.CheckXY(i, j, player);
+            bj.check[7] = bj.CheckYX(i, j, player);
+            
+            bj.weight[i][j] = bj.getWeight();
+            if(bj.weight[i][j] > max){
+                bj.maxi = i;
+                bj.maxj = j;
+                max = bj.weight[i][j];
+            }
+            printf("%d ", bj.weight[i][j]);
+            //cout << check[0][1] << " ";
+        }
+        else{
+            printf("- ");
+        }
+    }
+    puts("");
+}*/
 
 
