@@ -6,14 +6,25 @@
 //  Copyright © 2016年 Angus. All rights reserved.
 //
 
-#include <iostream>
 #include "main.h"
 
-using namespace std;
 
-
+Board gameBoard = Board();
 
 int main(int argc, const char * argv[]) {
-
+    
+    
+    gameBoard.addChess(1, 5);
+    gameBoard.addChess(2, 1);
+    gameBoard.addChess(2, 4);
+    gameBoard.addChess(2, 1);
+    gameBoard.addChess(3, 3);
+    gameBoard.addChess(2, 1);
+    gameBoard.addChess(4, 2);
+    gameBoard.addChess(2, 1);
+    gameBoard.addChess(5, 1);
+    
+    gameBoard.printBoard();
+    
     return 0;
 }
