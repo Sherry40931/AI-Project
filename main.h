@@ -40,7 +40,7 @@ list <Points> Board::getValidMove(){
 	
 	for(i=0; i<15; i++){
 		for(j=0; j<15; j++){
-			if(board[i][j] == 0){
+			if(table[i][j] == 0){
 				toBeAdd.x = i;
 				toBeAdd.y = j;
 				validMoves.push_back(toBeAdd);
@@ -49,6 +49,8 @@ list <Points> Board::getValidMove(){
 		}
 	}
 	return validMoves;
+}
+
 int Board::getState(){
     return state;
 }

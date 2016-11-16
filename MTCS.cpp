@@ -54,7 +54,7 @@ void MTCS::Execute(){
 // list裡找最好的(FindBestChild)
 //----------------------------------------------------------------------
 Node MTCS::Selection(Node current){
-	while(!MyBoard.checkBoard()){
+	while(!MyBoard.getState()){
 			
 		list <Points> validMoves = MyBoard.getValidMove();
 		printf("Selection %lu %lu\n", validMoves.size(), current.children.size());
