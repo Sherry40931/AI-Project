@@ -34,13 +34,12 @@ int main(int argc, const char * argv[]) {
             gameBoard.addChess(row, col);
         }
         else{
-            if(player == 1) cout << "White: " << endl;
-            else cout << "Black: " << endl;
+            if(player == 1) cout << "White: ";
+            else cout << "Black: ";
             
             if(gameBoard.getTurn() == 1) gameBoard.addChess(6, 7);
             else{
                 mtcs.Execute();
-                cout << endl << endl;
             }
             
         }
@@ -78,8 +77,9 @@ void MTCS::Execute(){
     Node current = Selection(&root);
     int value = Simulation(&current);
     Backpropagation(&current, value);
-    printf("==========\n");
-    PrintNode(root);
+    cout << (char)(current.point.x + 'A') << " " << current.point.y << endl;
+    //printf("==========\n");
+    //PrintNode(root);
 }
 
 //----------------------------------------------------------------------
@@ -112,7 +112,7 @@ Node MTCS::Expansion(Node *current){
 	bj.Judge();
 	vector<Points> validMoves;
 	Points bestPos;
-	printf("MAX: %d\n", bj.max);
+	//printf("MAX: %d\n", bj.max);
 	for(int i=0; i<15; i++){
 		for(int j=0; j<15; j++){
 			if(bj.weight[i][j] == bj.max && MyBoard->table[i][j] == 0){
@@ -139,18 +139,15 @@ Node MTCS::Expansion(Node *current){
 //----------------------------------------------------------------------
 int MTCS::Simulation(Node *current){
 	int cnt = 0;
-	int MAX_CNT = 500000;
-	vector<Points> validMoves = MyBoard->getValidMove();
+	vector<Points> validMoves;
 	
 	//把真正的棋盤拷貝到模擬的棋盤
 	MyBoard->copyTable();
 	//模擬
-	while(validMoves.size() > 0 && cnt < MAX_CNT){
+	while(validMoves.size() > 0){
 		validMoves = MyBoard->getValidMove();
 		int ranIndex = rand() % validMoves.size();
-		//printf("TEST: %d\n", ranIndex);
 		MyBoard->addChessToFakeTable(validMoves[ranIndex].x, validMoves[ranIndex].y);
-		cnt++;
 	}
 	
 	//平手
