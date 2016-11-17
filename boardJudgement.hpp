@@ -57,41 +57,14 @@ void boardJudgement::Judge(){
                 CheckXY(i, j, -me);
                 CheckYX(i, j, -me);
                 
-                /*if(i == 6 && j == 6){
-                    CheckX(i, j, me);    //橫的
-                    cout << endl << check[0][0] << endl;
-                    CheckY(i, j, me);    //直的
-                    CheckXY(i, j, me);   //左上右下
-                    CheckYX(i, j, me);   //右上左下
-                    
-                    CheckX(i, j, -me);
-                    cout << endl << check[0][0] << endl;
-                    CheckY(i, j, -me);
-                    CheckXY(i, j, -me);
-                    CheckYX(i, j, -me);
-
-                    
-                    cout << me << endl;
-                    for(int w = 0; w < 8; w++){
-                        cout << check[w][0] << " ";
-                    }
-                    cout << endl;
-                }*/
-                
                 weight[i][j] = getWeight();
                 if(weight[i][j] > max){
                     maxi = i;
                     maxj = j;
                     max = weight[i][j];
                 }
-                //printf("%d ", weight[i][j]);
-                //cout << check[0][1] << " ";
-            }
-            else{
-                //printf("- ");
             }
         }
-        //puts("");
     }
 }
 
