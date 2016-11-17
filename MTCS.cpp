@@ -129,7 +129,7 @@ Node MTCS::Expansion(Node *current){
 		
 	//寫入棋盤
 	MyBoard->addChess(validMoves[ranIndex].x, validMoves[ranIndex].y);
-	MyBoard->printBoard();
+	//MyBoard->printBoard();
 	return newNode;
 }
 
@@ -139,15 +139,18 @@ Node MTCS::Expansion(Node *current){
 //----------------------------------------------------------------------
 int MTCS::Simulation(Node *current){
 	int cnt = 0;
-	vector<Points> validMoves;
+	int MAX_CNT = 500000;
+	vector<Points> validMoves = MyBoard->getValidMove();
 	
 	//把真正的棋盤拷貝到模擬的棋盤
 	MyBoard->copyTable();
 	//模擬
-	while(validMoves.size() > 0){
+	while(validMoves.size() > 0 && cnt < MAX_CNT){
 		validMoves = MyBoard->getValidMove();
 		int ranIndex = rand() % validMoves.size();
+		//printf("TEST: %d\n", ranIndex);
 		MyBoard->addChessToFakeTable(validMoves[ranIndex].x, validMoves[ranIndex].y);
+		cnt++;
 	}
 	
 	//平手
