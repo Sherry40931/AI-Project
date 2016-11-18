@@ -37,7 +37,11 @@ int main(int argc, const char * argv[]) {
             if(player == 1) cout << "White: ";
             else cout << "Black: ";
             
-            if(gameBoard.getTurn() == 1) gameBoard.addChess(6, 7);
+            
+            if(gameBoard.getTurn() == 1) {
+            	gameBoard.addChess(6, 7);
+            	cout << "G 7" << endl;
+            }
             else{
                 mtcs.Execute();
             }
